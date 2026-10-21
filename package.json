@@ -6,12 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate": "tsx scripts/generate-archive.ts",
+    "index": "tsx scripts/index-algolia.ts"
   },
   "dependencies": {
+    "algoliasearch": "^5.60.0",
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-instantsearch": "^7.52.0",
+    "react-instantsearch-nextjs": "^1.4.13",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -21,6 +27,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }
