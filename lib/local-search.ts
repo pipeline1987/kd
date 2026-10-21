@@ -1,3 +1,4 @@
+import { parseNaturalQuery } from "@/lib/natural-query";
 import type { SearchRecord } from "@/lib/types";
 import {
   facetValueMatches,
@@ -115,7 +116,13 @@ export function createLocalSearchClient(records: SearchRecord[]) {
       const results = requests.map((request) => {
         const params = asParams(request.params);
         const query = String(params.query ?? "");
-        const tokens = tokenizeQuery(query);
+        const intent = parseNaturalQuery(query);
+        const tokens = intent.coreTokens.length
+          ? intent.coreTokens
+          : tokenizeQuery(query);
+        const highlightTokens = [
+          ...new Set([...intent.highlightTokens, ...intent.expansions.slice(0, 8)]),
+        ];
         const hitsPerPage = Number(params.hitsPerPage ?? 12);
         const page = Number(params.page ?? 0);
         const pre = String(params.highlightPreTag ?? "<mark>");
@@ -139,7 +146,20 @@ export function createLocalSearchClient(records: SearchRecord[]) {
             : defaultFacets;
         const maxValues = Number(params.maxValuesPerFacet ?? 100);
 
-        const ranked = rankRecords(index, tokens).filter(
+        const ranked = rankRecords(index, tokens, {
+          tokens,
+          termWeights: intent.termWeights,
+          natural: intent.isNatural,
+          preferRank: intent.rank,
+          preferYears: intent.years,
+          preferMonths: intent.months,
+          preferEras: intent.eras,
+          preferStatus: intent.status,
+          preferClassified: intent.classified,
+          preferAuthor: intent.author,
+          preferLocation: intent.location,
+          preferTopics: intent.topics,
+        }).filter(
           (record) =>
             matchesFacetFilters(record, params.facetFilters) &&
             matchesNumericFilters(record, params.numericFilters),
@@ -153,9 +173,9 @@ export function createLocalSearchClient(records: SearchRecord[]) {
             objectID: record.objectID,
             __position: start + offset,
             _highlightResult: {
-              title: highlight(record.title, tokens, pre, post),
-              excerpt: highlight(record.excerpt, tokens, pre, post),
-              author: highlight(record.author, tokens, pre, post),
+              title: highlight(record.title, highlightTokens, pre, post),
+              excerpt: highlight(record.excerpt, highlightTokens, pre, post),
+              author: highlight(record.author, highlightTokens, pre, post),
             },
           };
         });

@@ -8,7 +8,7 @@ export function HomeSearch() {
         id="ledger-q"
         name="q"
         type="search"
-        placeholder="Search by topic, author, shinobi, or village…"
+        placeholder="Ask a question or search a name, village, rank…"
         autoComplete="off"
       />
       <button type="submit">Search the ledger</button>

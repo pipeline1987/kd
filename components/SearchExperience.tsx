@@ -249,13 +249,16 @@ export function SearchExperience() {
           </FilterGroup>
         </aside>
         <div className="archive-main">
-          <SearchBox placeholder="Search by topic, author, date, shinobi, or village…" />
+          <SearchBox placeholder="Ask the ledger: who razed the village, failed retrieval, S-rank in Year 67…" />
+          <p className="search-hint">
+            Keyword, typo-tolerant, and natural-language search. Try a question.
+          </p>
           <div className="archive-meta">
             <Stats />
             <p className="search-engine">
               {usingAlgoliaCloud
-                ? "Algolia Cloud"
-                : "Algolia-compatible local index"}
+                ? "Algolia Cloud · semantic rewrite"
+                : "Local index · semantic + keyword"}
             </p>
             <ClearRefinements
               translations={{ resetButtonText: "Clear filters" }}

@@ -16,8 +16,9 @@ export default function ArchivePage() {
         <p className="kicker">The ledger</p>
         <h1>Mission report archive</h1>
         <p>
-          Twenty years of Konoha Daily dispatches. Search by keyword, then narrow
-          by category, date, rank, status, location, or correspondent.
+          Twenty years of Konoha Daily dispatches. Ask a question or search by
+          keyword, then narrow by category, date, rank, status, location, or
+          correspondent.
         </p>
       </header>
       <SearchExperience />
