@@ -28,6 +28,20 @@ npm run index
 
 Restart the dev server. The archive page will search the hosted `konoha_daily` index.
 
+## Search analytics
+
+Open **Search intel** in the masthead (`/intel`).
+
+With Algolia Cloud keys, `/intel` reads the full [Analytics API](https://www.algolia.com/doc/libraries/sdk/methods/analytics) (admin key, `analytics` ACL, region `us` or `de`): search and user counts, CTR, conversion, no-result and no-click rates, average click position, click positions, top searches (including CTR and conversion orderings), top hits, zero-result queries, searches with no clicks, filter attributes and per-facet values, filters with no results, countries, archive-tagged searches, add-to-cart / purchase / revenue endpoints, and Query Patterns (`/3/patterns`). InstantSearch sends the events those metrics need:
+
+- Searches with `clickAnalytics`, `analytics`, and the `archive` tag
+- Click and view events via [Insights](https://www.algolia.com/doc/guides/sending-events/using-library/instantsearch/) (`search-insights`)
+- Conversion (`Report Read`) when a hit is opened with its `queryID`
+
+Algolia’s numbers can lag a few minutes. Add-to-cart, purchase, and revenue stay empty unless those Insights events are sent. The same page still shows a live local desk (`data/search-analytics.json`, gitignored) for the current session.
+
+Set `ALGOLIA_ANALYTICS_REGION` in `.env` to `us` or `de` to match **Infrastructure → Analytics** in the Algolia dashboard.
+
 ## Tools
 
 | Tool | Use |
@@ -39,6 +53,8 @@ Restart the dev server. The archive page will search the hosted `konoha_daily` i
 | [Algolia](https://www.algolia.com/) (`algoliasearch` v5) | Hosted search index (`npm run index`) |
 | [React InstantSearch](https://www.algolia.com/doc/guides/building-search-ui/what-is-instantsearch/react/) | Archive search UI — topic, author, rank, and Konoha year |
 | [react-instantsearch-nextjs](https://www.npmjs.com/package/react-instantsearch-nextjs) | InstantSearch on the App Router |
+| [search-insights](https://www.npmjs.com/package/search-insights) | Algolia Insights clicks, views, and report-read conversions |
+| [Algolia Analytics API](https://www.algolia.com/doc/libraries/sdk/methods/analytics) (`algoliasearch` `initAnalytics`) | Hosted search, click, conversion, filter, country, revenue, and Query Patterns metrics on `/intel` |
 | [tsx](https://tsx.is/) | Runs `scripts/generate-archive.ts` and `scripts/index-algolia.ts` |
 | [ESLint](https://eslint.org/) (`eslint-config-next`) | Lint |
 | [Narutopedia](https://naruto.fandom.com/wiki/Naruto_(series)) | Canon timeline, characters, and [mission ranks](https://naruto.fandom.com/wiki/Missions) |

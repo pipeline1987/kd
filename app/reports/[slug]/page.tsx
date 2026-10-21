@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RankSeal } from "@/components/RankSeal";
 import { ReportCard } from "@/components/ReportCard";
+import { ReportInsights } from "@/components/ReportInsights";
 import {
   formatDateline,
   formatRyo,
@@ -10,7 +11,10 @@ import {
 } from "@/lib/article";
 import { articles, getArticle } from "@/lib/articles";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ qid?: string }>;
+};
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -26,8 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ReportPage({ params }: Props) {
+export default async function ReportPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { qid } = await searchParams;
   const article = getArticle(slug);
   if (!article) notFound();
 
@@ -52,6 +57,7 @@ export default async function ReportPage({ params }: Props) {
 
   return (
     <main className="edition report-page">
+      <ReportInsights objectID={article.objectID} queryID={qid} />
       <article className="scroll">
         <p className="kicker">
           Mission {article.missionId} · {article.era} · {article.location}

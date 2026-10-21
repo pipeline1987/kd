@@ -14,9 +14,11 @@ import {
   Stats,
   ToggleRefinement,
   useHits,
+  useInstantSearch,
 } from "react-instantsearch";
 import { InstantSearchNext } from "react-instantsearch-nextjs";
 import { RankSeal } from "@/components/RankSeal";
+import { SearchTelemetry } from "@/components/SearchTelemetry";
 import {
   ERAS,
   formatDateline,
@@ -25,12 +27,19 @@ import {
   slugify,
   STATUSES,
 } from "@/lib/article";
+import { insightsClient } from "@/lib/insights-client";
 import { searchClient, usingAlgoliaCloud } from "@/lib/search-client";
+import { trackSearchEvent } from "@/lib/track-search";
 import type { Rank, SearchRecord } from "@/lib/types";
 
 function asArray(value: unknown): string[] | undefined {
   if (!value) return undefined;
   return (Array.isArray(value) ? value : [value]).map(String);
+}
+
+function queryFromUrl(): string {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get("q") ?? "";
 }
 
 const RANK_ORDER = ["S", "A", "B", "C", "D"];
@@ -77,7 +86,32 @@ const routing = {
   },
 };
 
-function Hit({ hit }: { hit: SearchRecord & { objectID: string } }) {
+function Hit({
+  hit,
+  sendEvent,
+}: {
+  hit: SearchRecord & { objectID: string; __queryID?: string; __position?: number };
+  sendEvent: (eventType: string, hit: unknown, eventName?: string) => void;
+}) {
+  const { results } = useInstantSearch();
+
+  function onReportClick() {
+    trackSearchEvent({
+      type: "click",
+      query: String(results?.query || queryFromUrl()),
+      queryID: hit.__queryID ?? String(results?.queryID ?? ""),
+      index: INDEX_NAME,
+      objectID: hit.objectID,
+      position: hit.__position,
+      title: hit.title,
+    });
+    try {
+      sendEvent("click", hit, "Report Clicked");
+    } catch {
+      // Local Insights is a no-op; never block the ledger write.
+    }
+  }
+
   return (
     <article className="hit">
       <RankSeal rank={hit.rank as Rank} size="sm" />
@@ -86,7 +120,17 @@ function Hit({ hit }: { hit: SearchRecord & { objectID: string } }) {
           {hit.location} · {formatDateline(hit)} · {hit.missionId}
         </p>
         <h2>
-          <Link href={`/reports/${hit.slug}`}>
+          <Link
+            href={
+              (hit.__queryID ?? results?.queryID)
+                ? `/reports/${hit.slug}?qid=${encodeURIComponent(
+                    String(hit.__queryID ?? results?.queryID),
+                  )}`
+                : `/reports/${hit.slug}`
+            }
+            onPointerDown={onReportClick}
+            onClick={onReportClick}
+          >
             <Highlight attribute="title" hit={hit as never} />
           </Link>
         </h2>
@@ -161,8 +205,21 @@ export function SearchExperience() {
       indexName={INDEX_NAME}
       routing={routing}
       searchClient={searchClient}
+      insights={{
+        insightsClient,
+        insightsInitParams: usingAlgoliaCloud
+          ? { useCookie: true }
+          : undefined,
+      }}
     >
-      <Configure hitsPerPage={12} maxValuesPerFacet={80} />
+      <Configure
+        hitsPerPage={12}
+        maxValuesPerFacet={80}
+        clickAnalytics
+        analytics
+        analyticsTags={["archive"]}
+      />
+      <SearchTelemetry />
       <div className="archive-shell">
         <aside className="archive-filters">
           <p className="filter-kicker">Narrow the ledger</p>

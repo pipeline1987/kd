@@ -960,6 +960,138 @@ mark {
   font-style: italic;
 }
 
+.intel-updated {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.intel-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  margin: 0 0 1.8rem;
+}
+
+.intel-kpis article {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 0.9rem 1rem 1rem;
+}
+
+.intel-kpis p,
+.intel-grid h2,
+.intel-recent h2 {
+  margin: 0;
+  font-family: var(--font-condensed), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.intel-kpis strong {
+  display: block;
+  font-family: var(--font-masthead), serif;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  color: var(--porcelain);
+  margin: 0.25rem 0 0.15rem;
+}
+
+.intel-kpis small {
+  color: var(--gold);
+  font-size: 0.85rem;
+}
+
+.intel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem 2rem;
+  margin: 0 0 2rem;
+}
+
+.intel-grid section,
+.intel-recent {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.8rem;
+}
+
+.intel-rank {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0;
+}
+
+.intel-rank li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 0.8rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.intel-rank span,
+.intel-rank a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.intel-rank a:hover {
+  color: var(--seal);
+}
+
+.intel-rank small,
+.intel-recent small {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.intel-rank b {
+  font-family: var(--font-condensed), sans-serif;
+  color: var(--seal);
+  align-self: center;
+}
+
+.intel-empty-note {
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.intel-recent {
+  overflow-x: auto;
+}
+
+.intel-recent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+}
+
+.intel-recent th {
+  text-align: left;
+  font-family: var(--font-condensed), sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.35rem 0.5rem 0.45rem 0;
+}
+
+.intel-recent td {
+  padding: 0.45rem 0.5rem 0.45rem 0;
+  border-bottom: 1px dotted var(--rule);
+  vertical-align: top;
+}
+
+.intel-recent td:last-child,
+.intel-recent th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 960px) {
   .lead-grid,
   .archive-shell,
@@ -967,7 +1099,9 @@ mark {
   .card-grid,
   .topic-index ul,
   .year-spine ol,
-  .mission-meta {
+  .mission-meta,
+  .intel-kpis,
+  .intel-grid {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -999,7 +1133,9 @@ mark {
   .year-spine ol,
   .mission-meta,
   .scroll-head,
-  .masthead-brand {
+  .masthead-brand,
+  .intel-kpis,
+  .intel-grid {
     grid-template-columns: 1fr;
   }
 

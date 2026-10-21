@@ -2,7 +2,8 @@ import type { Article, MissionStatus, Rank } from "./types";
 
 export const ARCHIVE_START_YEAR = 64;
 export const ARCHIVE_END_YEAR = 83;
-export const INDEX_NAME = "konoha_daily";
+export const INDEX_NAME =
+  process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "konoha_daily";
 
 export const ERAS = [
   "Konoha Crush",

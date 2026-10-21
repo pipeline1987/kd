@@ -17,6 +17,7 @@
     "react-dom": "19.3.0",
     "react-instantsearch": "^7.52.0",
     "react-instantsearch-nextjs": "^1.4.13",
+    "search-insights": "^2.17.3",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
@@ -29,5 +30,6 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

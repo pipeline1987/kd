@@ -21,6 +21,7 @@ export function SiteFooter() {
       </p>
       <p className="footer-links">
         <Link href="/archive">Search the archive</Link>
+        <Link href="/intel">Search intel</Link>
         <Link href="/about">About the desk</Link>
       </p>
     </footer>

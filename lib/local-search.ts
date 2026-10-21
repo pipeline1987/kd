@@ -105,11 +105,19 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function makeQueryId() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export function createLocalSearchClient(records: SearchRecord[]) {
   const newestFirst = [...records].sort((a, b) => b.publishedAt - a.publishedAt);
   const index = prepareIndex(newestFirst);
 
   return {
+    appId: "KONOHA-LOCAL",
+    apiKey: "local",
     applicationID: "KONOHA-LOCAL",
     search(requests: SearchRequest[]) {
       const started = Date.now();
@@ -166,12 +174,14 @@ export function createLocalSearchClient(records: SearchRecord[]) {
         );
 
         const start = page * hitsPerPage;
+        const queryID = makeQueryId();
         const hits = ranked.slice(start, start + hitsPerPage).map((record, offset) => {
           const { body: _body, ...hit } = record;
           return {
             ...hit,
             objectID: record.objectID,
             __position: start + offset,
+            __queryID: queryID,
             _highlightResult: {
               title: highlight(record.title, highlightTokens, pre, post),
               excerpt: highlight(record.excerpt, highlightTokens, pre, post),
@@ -197,6 +207,7 @@ export function createLocalSearchClient(records: SearchRecord[]) {
           hitsPerPage,
           processingTimeMS: Math.max(1, Date.now() - started),
           query,
+          queryID,
           params: typeof request.params === "string" ? request.params : "",
           index: request.indexName,
           exhaustiveNbHits: true,
