@@ -1,4 +1,11 @@
 import type { SearchRecord } from "@/lib/types";
+import {
+  facetValueMatches,
+  highlight,
+  prepareIndex,
+  rankRecords,
+  tokenizeQuery,
+} from "@/lib/search-relevance";
 
 type SearchRequest = {
   indexName: string;
@@ -31,57 +38,6 @@ function asParams(raw: SearchRequest["params"]): Record<string, unknown> {
     }
   }
   return out;
-}
-
-function tokenize(query: string): string[] {
-  return query
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((token) => token.length > 1);
-}
-
-function haystack(record: SearchRecord): string {
-  return [
-    record.title,
-    record.excerpt,
-    record.author,
-    record.rank,
-    record.era,
-    record.location,
-    record.missionId,
-    record.topics.join(" "),
-  ]
-    .join(" ")
-    .toLowerCase();
-}
-
-function highlight(
-  text: string,
-  tokens: string[],
-  pre: string,
-  post: string,
-): { value: string; matchLevel: "none" | "partial" | "full" } {
-  if (!tokens.length) return { value: text, matchLevel: "none" };
-  const lower = text.toLowerCase();
-  let matched = 0;
-  let value = text;
-  for (const token of tokens) {
-    const index = lower.indexOf(token);
-    if (index === -1) continue;
-    matched += 1;
-    const re = new RegExp(`(${token})`, "ig");
-    value = value.replace(re, `${pre}$1${post}`);
-  }
-  return {
-    value,
-    matchLevel: matched === 0 ? "none" : matched >= tokens.length ? "full" : "partial",
-  };
-}
-
-function matchesQuery(record: SearchRecord, tokens: string[]): boolean {
-  if (!tokens.length) return true;
-  const text = haystack(record);
-  return tokens.every((token) => text.includes(token));
 }
 
 function matchesFacetFilters(
@@ -144,8 +100,13 @@ function facetValues(
   return counts;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export function createLocalSearchClient(records: SearchRecord[]) {
-  const sorted = [...records].sort((a, b) => b.publishedAt - a.publishedAt);
+  const newestFirst = [...records].sort((a, b) => b.publishedAt - a.publishedAt);
+  const index = prepareIndex(newestFirst);
 
   return {
     applicationID: "KONOHA-LOCAL",
@@ -154,7 +115,7 @@ export function createLocalSearchClient(records: SearchRecord[]) {
       const results = requests.map((request) => {
         const params = asParams(request.params);
         const query = String(params.query ?? "");
-        const tokens = tokenize(query);
+        const tokens = tokenizeQuery(query);
         const hitsPerPage = Number(params.hitsPerPage ?? 12);
         const page = Number(params.page ?? 0);
         const pre = String(params.highlightPreTag ?? "<mark>");
@@ -168,28 +129,30 @@ export function createLocalSearchClient(records: SearchRecord[]) {
             : defaultFacets;
         const maxValues = Number(params.maxValuesPerFacet ?? 100);
 
-        const filtered = sorted.filter(
+        const ranked = rankRecords(index, tokens).filter(
           (record) =>
-            matchesQuery(record, tokens) &&
             matchesFacetFilters(record, params.facetFilters) &&
             matchesNumericFilters(record, params.numericFilters),
         );
 
         const start = page * hitsPerPage;
-        const hits = filtered.slice(start, start + hitsPerPage).map((record) => ({
-          ...record,
-          objectID: record.objectID,
-          __position: start,
-          _highlightResult: {
-            title: highlight(record.title, tokens, pre, post),
-            excerpt: highlight(record.excerpt, tokens, pre, post),
-            author: highlight(record.author, tokens, pre, post),
-          },
-        }));
+        const hits = ranked.slice(start, start + hitsPerPage).map((record, offset) => {
+          const { body: _body, ...hit } = record;
+          return {
+            ...hit,
+            objectID: record.objectID,
+            __position: start + offset,
+            _highlightResult: {
+              title: highlight(record.title, tokens, pre, post),
+              excerpt: highlight(record.excerpt, tokens, pre, post),
+              author: highlight(record.author, tokens, pre, post),
+            },
+          };
+        });
 
         const facetCounts: Record<string, Record<string, number>> = {};
         for (const facet of facets) {
-          const counts = facetValues(filtered, facet);
+          const counts = facetValues(ranked, facet);
           const entries = Object.entries(counts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, maxValues);
@@ -198,9 +161,9 @@ export function createLocalSearchClient(records: SearchRecord[]) {
 
         return {
           hits,
-          nbHits: filtered.length,
+          nbHits: ranked.length,
           page,
-          nbPages: Math.max(1, Math.ceil(filtered.length / hitsPerPage)),
+          nbPages: Math.max(1, Math.ceil(ranked.length / hitsPerPage)),
           hitsPerPage,
           processingTimeMS: Math.max(1, Date.now() - started),
           query,
@@ -223,18 +186,17 @@ export function createLocalSearchClient(records: SearchRecord[]) {
       return Promise.resolve({
         results: requests.map((request) => {
           const { facetName, facetQuery = "", maxFacetHits = 10 } = request.params;
-          const q = facetQuery.toLowerCase();
-          const counts = facetValues(sorted, facetName);
+          const counts = facetValues(newestFirst, facetName);
           const facetHits: FacetHit[] = Object.entries(counts)
-            .filter(([value]) => !q || value.toLowerCase().includes(q))
+            .filter(([value]) => facetValueMatches(value, facetQuery))
             .sort((a, b) => b[1] - a[1])
             .slice(0, maxFacetHits)
             .map(([value, count]) => ({
               value,
               count,
-              highlighted: q
+              highlighted: facetQuery
                 ? value.replace(
-                    new RegExp(`(${q})`, "ig"),
+                    new RegExp(`(${escapeRegExp(facetQuery)})`, "ig"),
                     "<mark>$1</mark>",
                   )
                 : value,

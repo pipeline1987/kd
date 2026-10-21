@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { algoliasearch } from "algoliasearch";
 import { INDEX_NAME } from "../lib/article";
+import { SYNONYM_GROUPS } from "../lib/search-relevance";
 import type { SearchRecord } from "../lib/types";
 
 function loadEnv(root: string) {
@@ -42,12 +43,14 @@ async function main() {
     indexName,
     indexSettings: {
       searchableAttributes: [
-        "unordered(title)",
+        "title",
+        "topics",
+        "author",
+        "location",
         "unordered(excerpt)",
-        "unordered(author)",
-        "unordered(topics)",
-        "unordered(location)",
+        "unordered(body)",
         "missionId",
+        "year",
       ],
       attributesForFaceting: [
         "searchable(author)",
@@ -76,9 +79,32 @@ async function main() {
         "status",
         "classified",
         "feeRyo",
+        "featured",
       ],
-      customRanking: ["desc(publishedAt)"],
+      customRanking: ["desc(featured)", "desc(publishedAt)"],
+      ranking: [
+        "typo",
+        "geo",
+        "words",
+        "filters",
+        "proximity",
+        "attribute",
+        "exact",
+        "custom",
+      ],
       attributesToHighlight: ["title", "excerpt", "author"],
+      typoTolerance: true,
+      minWordSizefor1Typo: 4,
+      minWordSizefor2Typos: 8,
+      disableTypoToleranceOnAttributes: ["missionId", "year"],
+      disableExactOnAttributes: ["excerpt", "body"],
+      ignorePlurals: true,
+      removeStopWords: ["en"],
+      queryLanguages: ["en"],
+      queryType: "prefixLast",
+      removeWordsIfNoResults: "allOptional",
+      exactOnSingleWordQuery: "attribute",
+      alternativesAsExact: ["ignorePlurals", "singleWordSynonym"],
       hitsPerPage: 12,
     },
   });
@@ -90,6 +116,17 @@ async function main() {
     objects: records,
     waitForTasks: true,
   });
+
+  const synonyms = await client.saveSynonyms({
+    indexName,
+    synonymHit: SYNONYM_GROUPS.map((synonyms) => ({
+      objectID: `syn-${synonyms[0]}`,
+      type: "synonym",
+      synonyms,
+    })),
+    replaceExistingSynonyms: true,
+  });
+  await client.waitForTask({ indexName, taskID: synonyms.taskID });
 
   console.log(`Indexed ${records.length} mission reports into ${indexName}.`);
 }

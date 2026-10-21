@@ -447,8 +447,7 @@ function buildFiller(
 }
 
 function toSearchRecord(article: Article): SearchRecord {
-  const { body: _body, ...record } = article;
-  return record;
+  return { ...article, body: article.body.join(" ") };
 }
 
 function main() {

@@ -25,7 +25,7 @@ export type Article = {
   featured: boolean;
 };
 
-export type SearchRecord = Omit<Article, "body">;
+export type SearchRecord = Omit<Article, "body"> & { body: string };
 
 export type Author = {
   slug: string;
