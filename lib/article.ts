@@ -4,6 +4,22 @@ export const ARCHIVE_START_YEAR = 64;
 export const ARCHIVE_END_YEAR = 83;
 export const INDEX_NAME = "konoha_daily";
 
+export const ERAS = [
+  "Konoha Crush",
+  "Quiet Years",
+  "Akatsuki & War",
+  "Blank Period",
+  "Seventh's Peace",
+  "New Generation",
+] as const;
+
+export const STATUSES = [
+  "Completed",
+  "Failed",
+  "Ongoing",
+  "Classified",
+] as const;
+
 const MONTHS = [
   "January",
   "February",

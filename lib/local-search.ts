@@ -121,7 +121,17 @@ export function createLocalSearchClient(records: SearchRecord[]) {
         const pre = String(params.highlightPreTag ?? "<mark>");
         const post = String(params.highlightPostTag ?? "</mark>");
         const requestedFacets = (params.facets as string[] | undefined) ?? [];
-        const defaultFacets = ["rank", "author", "topics", "year", "month", "era"];
+        const defaultFacets = [
+          "rank",
+          "author",
+          "topics",
+          "year",
+          "month",
+          "era",
+          "status",
+          "location",
+          "classified",
+        ];
         const facets = requestedFacets.includes("*")
           ? defaultFacets
           : requestedFacets.length > 0

@@ -55,11 +55,13 @@ async function main() {
       attributesForFaceting: [
         "searchable(author)",
         "searchable(topics)",
+        "searchable(location)",
         "rank",
         "year",
         "month",
         "era",
         "status",
+        "classified",
       ],
       attributesToRetrieve: [
         "title",

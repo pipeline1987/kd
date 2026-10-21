@@ -703,9 +703,30 @@ a:hover {
 .archive-filters {
   position: sticky;
   top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   background: var(--paper-2);
   border: 1px solid var(--rule);
   padding: 1rem;
+}
+
+.filter-kicker {
+  font-family: var(--font-condensed), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  margin: 0 0 0.35rem;
+}
+
+.filter-group {
+  border-bottom: 1px dotted var(--rule);
+  padding: 0.35rem 0 0.65rem;
+}
+
+.filter-group:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .filter-label {
@@ -717,7 +738,39 @@ a:hover {
   color: var(--gold);
 }
 
-.filter-label:first-child {
+.filter-group > .filter-label {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0.45rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.filter-group > .filter-label::-webkit-details-marker {
+  display: none;
+}
+
+.filter-group > .filter-label::after {
+  content: "–";
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.filter-group:not([open]) > .filter-label::after {
+  content: "+";
+}
+
+.filter-sublabel {
+  font-family: var(--font-condensed), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  color: var(--steel);
+  margin: 0.55rem 0 0.25rem;
+}
+
+.filter-sublabel:first-of-type {
   margin-top: 0;
 }
 
@@ -787,8 +840,21 @@ a:hover {
   font-family: var(--font-condensed), sans-serif;
 }
 
-.ais-RefinementList-checkbox {
+.ais-RefinementList-checkbox,
+.ais-ToggleRefinement-checkbox {
   accent-color: var(--seal);
+}
+
+.ais-ToggleRefinement {
+  margin-top: 0.55rem;
+}
+
+.ais-ToggleRefinement-label {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.92rem;
 }
 
 .ais-RefinementList-searchBox .ais-SearchBox-form {
@@ -907,6 +973,7 @@ mark {
 
   .archive-filters {
     position: static;
+    max-height: none;
   }
 
   .masthead-nav {
