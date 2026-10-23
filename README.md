@@ -42,6 +42,12 @@ Algolia’s numbers can lag a few minutes. Add-to-cart, purchase, and revenue st
 
 Set `ALGOLIA_ANALYTICS_REGION` in `.env` to `us` or `de` to match **Infrastructure → Analytics** in the Algolia dashboard.
 
+## Ask the desk
+
+Open **Ask the desk** (`/desk`). The clerk is an agent: it searches the mission archive (Algolia Cloud when keys are set, otherwise the local index), opens matching reports, and answers only from those files.
+
+Add `OPENAI_API_KEY` for a full briefing (optional `OPENAI_BASE_URL` / `OPENAI_MODEL`). Without a model key it still retrieves reports and quotes the closest files.
+
 ## Tools
 
 | Tool | Use |
@@ -55,6 +61,7 @@ Set `ALGOLIA_ANALYTICS_REGION` in `.env` to `us` or `de` to match **Infrastructu
 | [react-instantsearch-nextjs](https://www.npmjs.com/package/react-instantsearch-nextjs) | InstantSearch on the App Router |
 | [search-insights](https://www.npmjs.com/package/search-insights) | Algolia Insights clicks, views, and report-read conversions |
 | [Algolia Analytics API](https://www.algolia.com/doc/libraries/sdk/methods/analytics) (`algoliasearch` `initAnalytics`) | Hosted search, click, conversion, filter, country, revenue, and Query Patterns metrics on `/intel` |
+| Ask the desk (`/desk`) | Agentic briefing over the mission ledger — search + read-report tools |
 | [tsx](https://tsx.is/) | Runs `scripts/generate-archive.ts` and `scripts/index-algolia.ts` |
 | [ESLint](https://eslint.org/) (`eslint-config-next`) | Lint |
 | [Narutopedia](https://naruto.fandom.com/wiki/Naruto_(series)) | Canon timeline, characters, and [mission ranks](https://naruto.fandom.com/wiki/Missions) |

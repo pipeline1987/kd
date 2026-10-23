@@ -6,6 +6,7 @@ import {
   ARCHIVE_END_YEAR,
   ARCHIVE_START_YEAR,
   formatDateline,
+  formatRyo,
   slugify,
 } from "@/lib/article";
 import {
@@ -35,6 +36,11 @@ export default function Home() {
   return (
     <main className="edition">
       <HomeSearch />
+      <p className="desk-invite">
+        Prefer a briefing?{" "}
+        <Link href="/desk">Ask the mission desk</Link> a question. The clerk
+        searches these files and answers from them.
+      </p>
 
       <section className="lead-grid">
         <article className="lead-story">

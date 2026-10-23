@@ -26,6 +26,7 @@ export function Masthead({ dateline }: { dateline: string }) {
       <nav className="masthead-nav" aria-label="Edition">
         <Link href="/">Latest file</Link>
         <Link href="/archive">Mission archive</Link>
+        <Link href="/desk">Ask the desk</Link>
         <Link href="/authors">Press corps</Link>
         <Link href="/intel">Search intel</Link>
         <Link href="/about">The desk</Link>

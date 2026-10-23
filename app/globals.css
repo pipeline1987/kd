@@ -1092,6 +1092,164 @@ mark {
   font-variant-numeric: tabular-nums;
 }
 
+.desk-invite {
+  margin: -1.2rem 0 1.8rem;
+  color: var(--ink-soft);
+}
+
+.desk-invite a {
+  color: var(--gold);
+}
+
+.desk-chat {
+  display: grid;
+  gap: 1rem;
+}
+
+.desk-mode {
+  margin: 0;
+  color: var(--gold);
+  font-size: 0.95rem;
+}
+
+.desk-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0 0 0.2rem;
+}
+
+.desk-prompts button {
+  font-family: var(--font-condensed), sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+
+.desk-prompts button:hover:not(:disabled) {
+  border-color: var(--seal);
+  color: var(--porcelain);
+}
+
+.desk-prompts button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.desk-log {
+  min-height: 18rem;
+  max-height: 32rem;
+  overflow: auto;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 1rem 1.1rem;
+}
+
+.desk-empty {
+  margin: 1.5rem 0;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.desk-bubble {
+  margin: 0 0 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.desk-bubble:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.desk-who {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-condensed), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.desk-bubble.user .desk-who {
+  color: var(--gold);
+}
+
+.desk-status {
+  margin: 0;
+  color: var(--gold);
+  font-style: italic;
+}
+
+.desk-copy p {
+  margin: 0 0 0.7rem;
+}
+
+.desk-copy a {
+  color: var(--gold);
+}
+
+.desk-sources {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+
+.desk-sources li {
+  font-size: 0.9rem;
+}
+
+.desk-sources a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.desk-sources a:hover {
+  color: var(--seal);
+}
+
+.desk-form {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 0.4rem;
+  box-shadow: 3px 3px 0 #000;
+}
+
+.desk-form input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1.05rem;
+  padding: 0.65rem 0.75rem;
+  color: var(--ink);
+  caret-color: var(--seal);
+  outline: none;
+}
+
+.desk-form button {
+  font-family: var(--font-condensed), sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--seal);
+  color: var(--porcelain);
+  border: 0;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+}
+
+.desk-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 960px) {
   .lead-grid,
   .archive-shell,
